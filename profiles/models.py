@@ -73,6 +73,11 @@ class SupervisorProfile(models.Model):
     degree = models.CharField(max_length=255, blank=True, null=True)
     photo = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     skills = models.ManyToManyField(Skill, blank=True)
+    research_interests = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Research areas and thesis topics this supervisor can guide (e.g., 'AI, Machine Learning, Web Development')"
+    )
 
     def clean(self):
         if self.pk and self.skills.count() > 10:
