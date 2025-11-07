@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'topics',
     'teams',
     'chat',
+    'ai_chatbot',
 ]
 
 MIDDLEWARE = [
@@ -117,11 +118,23 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_THROTTLE_RATES': {
+        # AI Enhancement throttles only
+        'ai_enhancement_user': '10/hour',      # 10 requests per hour for authenticated users
+        'ai_enhancement_anon': '3/day',        # 3 requests per day for anonymous users
+        'ai_enhancement_burst': '3/minute',    # 3 requests per minute burst protection
+    },
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),  
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+}
+
+# AI Rate Limits (Daily)
+AI_RATE_LIMITS = {
+    'topic_enhancement': int(os.getenv('AI_TOPIC_ENHANCEMENT_DAILY_LIMIT', '3')),
+    'chatbot_message': int(os.getenv('AI_CHATBOT_DAILY_LIMIT', '7')),
 }
 
 CHANNEL_LAYERS = {

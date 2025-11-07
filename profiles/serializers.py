@@ -68,7 +68,7 @@ class SupervisorShortSerializer(serializers.ModelSerializer):
     """ Лёгкий сериализатор супервизора без проектов """
     class Meta:
         model = SupervisorProfile
-        fields = ['id', 'first_name', 'last_name', 'photo']
+        fields = ['id', 'first_name', 'last_name', 'photo', 'research_interests']
 
 class DeanOfficeProfileSerializer(serializers.ModelSerializer):
     """ Serializer for Dean Office Profile """
