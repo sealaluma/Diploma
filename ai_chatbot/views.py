@@ -7,11 +7,13 @@ Provides REST API endpoint for AI chatbot interactions.
 from rest_framework import status, permissions
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.response import Response
+from rest_framework.views import APIView
 import logging
 
 from .ai_assistant.chatbot import chat_with_ai
 from .serializers import ChatRequestSerializer, ChatResponseSerializer
 from .throttles import AIChatbotThrottle
+from .rate_limiter import require_ai_quota, get_user_quota_status
 from profiles.models import StudentProfile
 
 logger = logging.getLogger(__name__)
@@ -19,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
+@require_ai_quota('chatbot_message')
 # @throttle_classes([AIChatbotThrottle])  # Disabled for testing
 def ai_chat(request):
     """
@@ -162,3 +165,29 @@ def chat_health_check(request):
         "checks": checks,
         "warnings": warnings if warnings else None
     })
+
+
+class AIQuotaView(APIView):
+    """
+    GET /api/quota/
+    Returns current AI usage quota for authenticated user
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        quota_status = get_user_quota_status(request.user)
+
+        return Response({
+            'topic_enhancements': {
+                'used': quota_status['topic_enhancements']['used'],
+                'limit': quota_status['topic_enhancements']['limit'],
+                'remaining': quota_status['topic_enhancements']['remaining'],
+                'resets_at': quota_status['topic_enhancements']['resets_at'].isoformat(),
+            },
+            'chatbot_messages': {
+                'used': quota_status['chatbot_messages']['used'],
+                'limit': quota_status['chatbot_messages']['limit'],
+                'remaining': quota_status['chatbot_messages']['remaining'],
+                'resets_at': quota_status['chatbot_messages']['resets_at'].isoformat(),
+            }
+        })

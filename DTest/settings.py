@@ -127,8 +127,14 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),  
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+}
+
+# AI Rate Limits (Daily)
+AI_RATE_LIMITS = {
+    'topic_enhancement': int(os.getenv('AI_TOPIC_ENHANCEMENT_DAILY_LIMIT', '3')),
+    'chatbot_message': int(os.getenv('AI_CHATBOT_DAILY_LIMIT', '7')),
 }
 
 CHANNEL_LAYERS = {

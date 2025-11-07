@@ -8,6 +8,7 @@ from .serializers import ThesisTopicSerializer
 from rest_framework.exceptions import PermissionDenied
 from .ai_enhancement import enhance_thesis_content, EnhancedThesisContent
 from .throttles import AIEnhancementUserThrottle, AIEnhancementBurstThrottle
+from ai_chatbot.rate_limiter import require_ai_quota
 import logging
 
 logger = logging.getLogger(__name__)
@@ -50,7 +51,8 @@ class ThesisTopicUpdateView(generics.RetrieveUpdateAPIView):
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-@throttle_classes([AIEnhancementUserThrottle, AIEnhancementBurstThrottle])
+@require_ai_quota('topic_enhancement')
+# @throttle_classes([AIEnhancementUserThrottle, AIEnhancementBurstThrottle])
 def enhance_description(request):
     """
     Enhance thesis topic titles and description using AI.
