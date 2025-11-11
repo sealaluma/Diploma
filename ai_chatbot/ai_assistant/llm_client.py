@@ -170,7 +170,7 @@ def call_gemini_with_functions(
             - Mention skill matches when relevant"""
 
         chat = client.chats.create(
-            model='gemini-2.0-flash-exp',
+            model='gemini-2.5-flash',
             config=types.GenerateContentConfig(
                 temperature=temperature,
                 tools=[TOOLS],
